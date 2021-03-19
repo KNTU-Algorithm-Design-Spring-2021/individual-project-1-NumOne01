@@ -5,12 +5,14 @@ import java.util.Scanner;
 public class ClosestPairOfPoints {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+        System.out.print("Enter number of points : ");
         int n = in.nextInt();
         Point[] points = new Point[n];
+        System.out.println("Enter points coordinates : ");
         for (int i = 0; i < n; i++) {
             points[i] = new Point(in.nextDouble(), in.nextDouble(), in.nextDouble());
         }
-        System.out.println(solve(points));
+        System.out.println("Minimum distance is : " + solve(points));
     }
 
     private static double dist(Point pointA, Point pointB) {
@@ -47,46 +49,46 @@ public class ClosestPairOfPoints {
         return min;
     }
 
-    private static double findMinDistance(Point[] px, ArrayList<Point> py, ArrayList<Point> pz, int left, int right, int dimension) {
+    private static double findMinDistance(Point[] firstDPoints, ArrayList<Point> secondDPoints, ArrayList<Point> thirdDPoints, int left, int right, int dimension) {
         if (right - left <= 3) {
-            return bruteForce(px, left, right);
+            return bruteForce(firstDPoints, left, right);
         }
 
         int mid = (left + right) / 2;
-        Point midPoint = px[mid];
+        Point midPoint = firstDPoints[mid];
 
-        ArrayList<Point> pyLeft = new ArrayList<>();
-        ArrayList<Point> pyRight = new ArrayList<>();
+        ArrayList<Point> secondDPointsLeft = new ArrayList<>();
+        ArrayList<Point> secondDPointsRight = new ArrayList<>();
 
-        for (Point point : py) {
+        for (Point point : secondDPoints) {
             if (point.x <= midPoint.x) {
-                pyLeft.add(point);
+                secondDPointsLeft.add(point);
             } else {
-                pyRight.add(point);
+                secondDPointsRight.add(point);
             }
         }
 
-        ArrayList<Point> pzLeft = new ArrayList<>();
-        ArrayList<Point> pzRight = new ArrayList<>();
+        ArrayList<Point> thirdDPointsLeft = new ArrayList<>();
+        ArrayList<Point> thirdDPointsRight = new ArrayList<>();
 
         if (dimension > 2) {
-            for (Point point : pz) {
+            for (Point point : thirdDPoints) {
                 if (point.x <= midPoint.x) {
-                    pzLeft.add(point);
+                    thirdDPointsLeft.add(point);
                 } else {
-                    pzRight.add(point);
+                    thirdDPointsRight.add(point);
                 }
             }
         }
 
-        double dl = findMinDistance(px, pyLeft, pzLeft, left, mid, dimension);
-        double dr = findMinDistance(px, pyRight, pzRight, mid + 1, right, dimension);
+        double dl = findMinDistance(firstDPoints, secondDPointsLeft, thirdDPointsLeft, left, mid, dimension);
+        double dr = findMinDistance(firstDPoints, secondDPointsRight, thirdDPointsRight, mid + 1, right, dimension);
 
         double d = Math.min(dl, dr);
 
         ArrayList<Point> stripY = new ArrayList<>();
 
-        for (Point point : py) {
+        for (Point point : secondDPoints) {
             if (Math.abs(point.x - midPoint.x) < d) {
                 stripY.add(point);
             }
@@ -94,12 +96,12 @@ public class ClosestPairOfPoints {
 
         double strip;
         if (dimension > 2) {
-            Point[] yPoints = new Point[py.size()];
+            Point[] points = new Point[secondDPoints.size()];
             int i = 0;
-            for (Point point : py) {
-                yPoints[i++] = point;
+            for (Point point : secondDPoints) {
+                points[i++] = point;
             }
-            strip = findMinDistance(yPoints, pz, pz, 0, py.size() - 1, dimension - 1);
+            strip = findMinDistance(points, thirdDPoints, thirdDPoints, 0, secondDPoints.size() - 1, dimension - 1);
         } else strip = stripClose(stripY, d);
 
         return Math.min(d, strip);
@@ -127,12 +129,3 @@ class Point {
     }
 }
 
-/*
-6
-2 3 5
-12 30 -3
-40 50 -8
-5 1 -10
-12 10 7
-3 4 10
- */
