@@ -31,12 +31,20 @@ public class ClosestPairOfPoints {
         return Math.sqrt(xDiff + yDiff + zDiff);
     }
 
-    private static double stripClose(ArrayList<Point> py, double d) {
+    /**
+     * calculates the distance for points in a strip
+     * this runs in a O(6) order
+     *
+     * @param pz list of points ordered by z
+     * @param d  upper bound
+     * @return minimum of d and points in the strip
+     */
+    private static double stripClose(ArrayList<Point> pz, double d) {
         double min = d, distance;
-        for (int i = 0; i < py.size(); i++) {
+        for (int i = 0; i < pz.size(); i++) {
             int j = i + 1;
-            while (j < py.size() && py.get(i).getY() - py.get(j).getY() < d) {
-                distance = dist(py.get(i), py.get(j));
+            while (j < pz.size() && pz.get(i).getZ() - pz.get(j).getZ() < d) {
+                distance = dist(pz.get(i), pz.get(j));
                 if (distance < min)
                     min = distance;
                 j++;
@@ -45,6 +53,16 @@ public class ClosestPairOfPoints {
         return min;
     }
 
+    /**
+     * calculates the minimum distance of points
+     * with brute force
+     * this runs on O(n^2)
+     *
+     * @param points array of points
+     * @param left   left bound
+     * @param right  right bound
+     * @return minimum distance
+     */
     private static double bruteForce(Point[] points, int left, int right) {
         double min = Double.MAX_VALUE;
         for (int i = left; i <= right; i++) {
@@ -57,6 +75,18 @@ public class ClosestPairOfPoints {
         return min;
     }
 
+    /**
+     * find minimum distance of points with a divide and conquer algorithm
+     * this runs on O(nlog(n)^2)
+     *
+     * @param firstDPoints  points ordered on first dimension
+     * @param secondDPoints points ordered on second dimension
+     * @param thirdDPoints  points ordered on third dimension
+     * @param left          left bound
+     * @param right         right bound
+     * @param dimension     dimension of points
+     * @return minimum distance of points
+     */
     private static double findMinDistance(Point[] firstDPoints, ArrayList<Point> secondDPoints, ArrayList<Point> thirdDPoints, int left, int right, int dimension) {
         if (right - left <= 3) {
             return bruteForce(firstDPoints, left, right);
@@ -104,12 +134,13 @@ public class ClosestPairOfPoints {
 
         double strip;
         if (dimension > 2) {
-            Point[] points = new Point[secondDPoints.size()];
+            Point[] points = new Point[stripY.size()];
             int i = 0;
-            for (Point point : secondDPoints) {
+            for (Point point : stripY) {
                 points[i++] = point;
             }
-            strip = findMinDistance(points, thirdDPoints, thirdDPoints, 0, secondDPoints.size() - 1, dimension - 1);
+            // solve problem for a lower dimension
+            strip = findMinDistance(points, thirdDPoints, thirdDPoints, 0, stripY.size() - 1, dimension - 1);
         } else strip = stripClose(stripY, d);
 
         return Math.min(d, strip);
@@ -136,15 +167,15 @@ class Point {
         this.z = z;
     }
 
-    public double getX() {
+    double getX() {
         return x;
     }
 
-    public double getY() {
+    double getY() {
         return y;
     }
 
-    public double getZ() {
+    double getZ() {
         return z;
     }
 }
