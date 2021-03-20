@@ -12,7 +12,8 @@ public class ClosestPairOfPoints {
         for (int i = 0; i < n; i++) {
             points[i] = new Point(in.nextDouble(), in.nextDouble(), in.nextDouble());
         }
-        System.out.println("Minimum distance is : " + solve(points));
+        ClosestPairOfPoints closestPairOfPoints = new ClosestPairOfPoints();
+        System.out.println("Minimum distance is : " + closestPairOfPoints.solve(points));
     }
 
     /**
@@ -23,7 +24,7 @@ public class ClosestPairOfPoints {
      * @param pointB second point
      * @return distance between two points
      */
-    private static double dist(Point pointA, Point pointB) {
+    private double dist(Point pointA, Point pointB) {
         final double xDiff = Math.pow(pointA.getX() - pointB.getX(), 2);
         final double yDiff = Math.pow(pointA.getY() - pointB.getY(), 2);
         final double zDiff = Math.pow(pointA.getZ() - pointB.getZ(), 2);
@@ -39,7 +40,7 @@ public class ClosestPairOfPoints {
      * @param d  upper bound
      * @return minimum of d and points in the strip
      */
-    private static double stripClose(ArrayList<Point> pz, double d) {
+    private double stripClose(ArrayList<Point> pz, double d) {
         double min = d, distance;
         for (int i = 0; i < pz.size(); i++) {
             int j = i + 1;
@@ -63,7 +64,7 @@ public class ClosestPairOfPoints {
      * @param right  right bound
      * @return minimum distance
      */
-    private static double bruteForce(Point[] points, int left, int right) {
+    private double bruteForce(Point[] points, int left, int right) {
         double min = Double.MAX_VALUE;
         for (int i = left; i <= right; i++) {
             for (int j = i + 1; j <= right; j++) {
@@ -87,7 +88,7 @@ public class ClosestPairOfPoints {
      * @param dimension     dimension of points
      * @return minimum distance of points
      */
-    private static double findMinDistance(Point[] firstDPoints, ArrayList<Point> secondDPoints, ArrayList<Point> thirdDPoints, int left, int right, int dimension) {
+    private double findMinDistance(Point[] firstDPoints, ArrayList<Point> secondDPoints, ArrayList<Point> thirdDPoints, int left, int right, int dimension) {
         if (right - left <= 3) {
             return bruteForce(firstDPoints, left, right);
         }
@@ -146,7 +147,7 @@ public class ClosestPairOfPoints {
         return Math.min(d, strip);
     }
 
-    private static double solve(Point[] points) {
+    private double solve(Point[] points) {
         Point[] py = Arrays.copyOf(points, points.length);
         Point[] pz = Arrays.copyOf(points, points.length);
         Arrays.sort(points, (a, b) -> (int) (a.getX() - b.getX()));
